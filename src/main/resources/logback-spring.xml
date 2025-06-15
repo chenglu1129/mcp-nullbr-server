@@ -10,9 +10,9 @@
 
     <!-- 文件输出 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/nullbr-mcp-server.log</file>
+        <file>D:/workspace/log/nullbr-mcp-server.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/nullbr-mcp-server.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>D:/workspace/log/nullbr-mcp-server.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
