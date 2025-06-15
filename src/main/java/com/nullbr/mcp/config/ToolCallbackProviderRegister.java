@@ -1,0 +1,17 @@
+package com.cheng.mcpnullbrserversse.config;
+
+import com.cheng.mcpnullbrserversse.service.NullbrApiService;
+import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.tool.method.MethodToolCallbackProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ToolCallbackProviderRegister {
+
+    @Bean
+    public ToolCallbackProvider nullbrTools(NullbrApiService nUllbrApiService) {
+        return MethodToolCallbackProvider.builder().toolObjects(nUllbrApiService).build();
+    }
+
+}
