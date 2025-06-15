@@ -51,7 +51,8 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
-            
+            headers.set("Accept-Charset", "UTF-8");
+
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -83,7 +84,8 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
-            
+            headers.set("Accept-Charset", "UTF-8");
+
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -113,7 +115,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -143,7 +145,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -175,7 +177,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -208,7 +210,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -240,7 +242,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -270,7 +272,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -303,7 +305,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
             headers.set("X-API-KEY", apiKey);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -335,7 +337,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
             headers.set("X-API-KEY", apiKey);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -369,7 +371,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
             headers.set("X-API-KEY", apiKey);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -405,7 +407,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
             headers.set("X-API-KEY", apiKey);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());
@@ -437,7 +439,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-APP-ID", appId);
             headers.set("X-API-KEY", apiKey);
-            
+            headers.set("Accept-Charset", "UTF-8");
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
             logger.debug("API请求: {}", builder.toUriString());

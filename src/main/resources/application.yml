@@ -6,13 +6,19 @@ spring:
         name: nullbr-mcp-server
         version: 0.0.1
   application:
+    port: 8081
     name: nullbr-mcp-server
   main:
     web-application-type: none
     banner-mode: off
-
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      
 nullbr:
   api:
     base-url: https://api.nullbr.eu.org
-    app-id: ${NULLBR_APP_ID:pUNPgvXND}
-    api-key: ${NULLBR_API_KEY:Ea8F3jR76suCbOqQpi5GAVEhcpbhiI94} 
+    app-id: pUNPgvXND
+    api-key: Ea8F3jR76suCbOqQpi5GAVEhcpbhiI94
