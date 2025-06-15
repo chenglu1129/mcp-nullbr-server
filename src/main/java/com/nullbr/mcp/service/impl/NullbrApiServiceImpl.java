@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nullbr.mcp.service.NullbrApiService;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -17,6 +19,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class NullbrApiServiceImpl implements NullbrApiService {
+
+    private static final Logger logger = LoggerFactory.getLogger(NullbrApiServiceImpl.class);
 
     @Value("${nullbr.api.base-url}")
     private String baseUrl;
@@ -39,6 +43,8 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             @Parameter(description = "搜索关键词") String query,
             @Parameter(description = "页码，默认为1") int page) {
         try {
+            logger.info("搜索影视资源: query={}, page={}", query, page);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/search")
                 .queryParam("query", query)
                 .queryParam("page", page);
@@ -48,6 +54,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -55,17 +62,53 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatSearchResults(response.getBody());
         } catch (Exception e) {
+            logger.error("搜索出错", e);
             return "搜索出错: " + e.getMessage();
         }
     }
     
     @Override
+    @Tool(description = "getList")
+    public String getList(
+            @Parameter(description = "列表ID") int listId,
+            @Parameter(description = "页码，默认为1") int page) {
+        try {
+            logger.info("获取列表: listId={}, page={}", listId, page);
+            
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/list/" + listId)
+                .queryParam("page", page);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            logger.debug("API请求: {}", builder.toUriString());
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            logger.debug("API响应状态码: {}", response.getStatusCode());
+            return formatListResults(response.getBody());
+        } catch (Exception e) {
+            logger.error("获取列表出错", e);
+            return "获取列表出错: " + e.getMessage();
+        }
+    }
+
+    @Override
     @Tool(description = "getMovieInfo")
     public String getMovieInfo(
             @Parameter(description = "电影的TMDB ID") int tmdbId) {
         try {
+            logger.info("获取电影信息: tmdbId={}", tmdbId);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/movie/" + tmdbId);
                 
             HttpHeaders headers = new HttpHeaders();
@@ -73,6 +116,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -80,8 +124,10 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatMovieInfo(response.getBody());
         } catch (Exception e) {
+            logger.error("获取电影信息出错", e);
             return "获取电影信息出错: " + e.getMessage();
         }
     }
@@ -91,6 +137,8 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     public String getTVInfo(
             @Parameter(description = "电视剧的TMDB ID") int tmdbId) {
         try {
+            logger.info("获取电视剧信息: tmdbId={}", tmdbId);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/tv/" + tmdbId);
                 
             HttpHeaders headers = new HttpHeaders();
@@ -98,6 +146,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -105,8 +154,10 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatTVInfo(response.getBody());
         } catch (Exception e) {
+            logger.error("获取电视剧信息出错", e);
             return "获取电视剧信息出错: " + e.getMessage();
         }
     }
@@ -117,6 +168,8 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             @Parameter(description = "电视剧的TMDB ID") int tmdbId,
             @Parameter(description = "季号") int seasonNumber) {
         try {
+            logger.info("获取电视剧季度信息: tmdbId={}, seasonNumber={}", tmdbId, seasonNumber);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 baseUrl + "/tv/" + tmdbId + "/season/" + seasonNumber);
                 
@@ -125,6 +178,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -132,8 +186,10 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatTVSeasonInfo(response.getBody());
         } catch (Exception e) {
+            logger.error("获取电视剧季度信息出错", e);
             return "获取电视剧季度信息出错: " + e.getMessage();
         }
     }
@@ -145,6 +201,8 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             @Parameter(description = "季号") int seasonNumber,
             @Parameter(description = "集号") int episodeNumber) {
         try {
+            logger.info("获取电视剧集信息: tmdbId={}, seasonNumber={}, episodeNumber={}", tmdbId, seasonNumber, episodeNumber);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 baseUrl + "/tv/" + tmdbId + "/season/" + seasonNumber + "/episode/" + episodeNumber);
                 
@@ -153,6 +211,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -160,18 +219,84 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatTVEpisodeInfo(response.getBody());
         } catch (Exception e) {
+            logger.error("获取电视剧集信息出错", e);
             return "获取电视剧集信息出错: " + e.getMessage();
         }
     }
     
+    @Override
+    @Tool(description = "getPersonInfo")
+    public String getPersonInfo(
+            @Parameter(description = "人物的TMDB ID") int tmdbId,
+            @Parameter(description = "页码，默认为1") int page) {
+        try {
+            logger.info("获取人物信息: tmdbId={}, page={}", tmdbId, page);
+            
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/person/" + tmdbId)
+                .queryParam("page", page);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            logger.debug("API请求: {}", builder.toUriString());
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            logger.debug("API响应状态码: {}", response.getStatusCode());
+            return formatPersonInfo(response.getBody());
+        } catch (Exception e) {
+            logger.error("获取人物信息出错", e);
+            return "获取人物信息出错: " + e.getMessage();
+        }
+    }
+
+    @Override
+    @Tool(description = "getCollectionInfo")
+    public String getCollectionInfo(
+            @Parameter(description = "合集的TMDB ID") int tmdbId) {
+        try {
+            logger.info("获取合集信息: tmdbId={}", tmdbId);
+            
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/collection/" + tmdbId);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            logger.debug("API请求: {}", builder.toUriString());
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            logger.debug("API响应状态码: {}", response.getStatusCode());
+            return formatCollectionInfo(response.getBody());
+        } catch (Exception e) {
+            logger.error("获取合集信息出错", e);
+            return "获取合集信息出错: " + e.getMessage();
+        }
+    }
+
     @Override
     @Tool(description = "getMovieResources")
     public String getMovieResources(
             @Parameter(description = "电影的TMDB ID") int tmdbId,
             @Parameter(description = "资源类型，可选值：115(网盘)、magnet(磁力)、ed2k(电驴)、video(在线播放)") String resourceType) {
         try {
+            logger.info("获取电影资源: tmdbId={}, resourceType={}", tmdbId, resourceType);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 baseUrl + "/movie/" + tmdbId + "/" + resourceType);
                 
@@ -181,6 +306,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -188,9 +314,43 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatMovieResources(response.getBody(), resourceType);
         } catch (Exception e) {
+            logger.error("获取电影资源出错", e);
             return "获取电影资源出错: " + e.getMessage();
+        }
+    }
+    
+    @Override
+    @Tool(description = "getTVResources")
+    public String getTVResources(
+            @Parameter(description = "电视剧的TMDB ID") int tmdbId) {
+        try {
+            logger.info("获取电视剧网盘资源: tmdbId={}", tmdbId);
+            
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                baseUrl + "/tv/" + tmdbId + "/115");
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            headers.set("X-API-KEY", apiKey);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            logger.debug("API请求: {}", builder.toUriString());
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            logger.debug("API响应状态码: {}", response.getStatusCode());
+            return formatTVResources(response.getBody());
+        } catch (Exception e) {
+            logger.error("获取电视剧网盘资源出错", e);
+            return "获取电视剧网盘资源出错: " + e.getMessage();
         }
     }
     
@@ -201,6 +361,8 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             @Parameter(description = "季号") int seasonNumber,
             @Parameter(description = "资源类型，可选值：magnet(磁力)") String resourceType) {
         try {
+            logger.info("获取电视剧季度资源: tmdbId={}, seasonNumber={}, resourceType={}", tmdbId, seasonNumber, resourceType);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 baseUrl + "/tv/" + tmdbId + "/season/" + seasonNumber + "/" + resourceType);
                 
@@ -210,6 +372,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -217,8 +380,10 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatTVSeasonResources(response.getBody(), resourceType);
         } catch (Exception e) {
+            logger.error("获取电视剧季度资源出错", e);
             return "获取电视剧季度资源出错: " + e.getMessage();
         }
     }
@@ -231,6 +396,9 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             @Parameter(description = "集号") int episodeNumber,
             @Parameter(description = "资源类型，可选值：magnet(磁力)、ed2k(电驴)、video(在线播放)") String resourceType) {
         try {
+            logger.info("获取电视剧集资源: tmdbId={}, seasonNumber={}, episodeNumber={}, resourceType={}", 
+                    tmdbId, seasonNumber, episodeNumber, resourceType);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 baseUrl + "/tv/" + tmdbId + "/season/" + seasonNumber + "/episode/" + episodeNumber + "/" + resourceType);
                 
@@ -240,6 +408,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -247,123 +416,21 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatTVEpisodeResources(response.getBody(), resourceType);
         } catch (Exception e) {
+            logger.error("获取电视剧集资源出错", e);
             return "获取电视剧集资源出错: " + e.getMessage();
         }
     }
     
     @Override
-    @Tool(description = "getList")
-    public String getList(
-            @Parameter(description = "列表ID") int listId,
-            @Parameter(description = "页码，默认为1") int page) {
-        try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/list/" + listId)
-                .queryParam("page", page);
-                
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("X-APP-ID", appId);
-            
-            HttpEntity<?> entity = new HttpEntity<>(headers);
-            
-            ResponseEntity<String> response = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.GET,
-                entity,
-                String.class
-            );
-            
-            return formatListResults(response.getBody());
-        } catch (Exception e) {
-            return "获取列表出错: " + e.getMessage();
-        }
-    }
-
-    @Override
-    @Tool(description = "getPersonInfo")
-    public String getPersonInfo(
-            @Parameter(description = "人物的TMDB ID") int tmdbId,
-            @Parameter(description = "页码，默认为1") int page) {
-        try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/person/" + tmdbId)
-                .queryParam("page", page);
-                
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("X-APP-ID", appId);
-            
-            HttpEntity<?> entity = new HttpEntity<>(headers);
-            
-            ResponseEntity<String> response = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.GET,
-                entity,
-                String.class
-            );
-            
-            return formatPersonInfo(response.getBody());
-        } catch (Exception e) {
-            return "获取人物信息出错: " + e.getMessage();
-        }
-    }
-
-    @Override
-    @Tool(description = "getCollectionInfo")
-    public String getCollectionInfo(
-            @Parameter(description = "合集的TMDB ID") int tmdbId) {
-        try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/collection/" + tmdbId);
-                
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("X-APP-ID", appId);
-            
-            HttpEntity<?> entity = new HttpEntity<>(headers);
-            
-            ResponseEntity<String> response = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.GET,
-                entity,
-                String.class
-            );
-            
-            return formatCollectionInfo(response.getBody());
-        } catch (Exception e) {
-            return "获取合集信息出错: " + e.getMessage();
-        }
-    }
-
-    @Override
-    @Tool(description = "getTVResources")
-    public String getTVResources(
-            @Parameter(description = "电视剧的TMDB ID") int tmdbId) {
-        try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                baseUrl + "/tv/" + tmdbId + "/115");
-                
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("X-APP-ID", appId);
-            headers.set("X-API-KEY", apiKey);
-            
-            HttpEntity<?> entity = new HttpEntity<>(headers);
-            
-            ResponseEntity<String> response = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.GET,
-                entity,
-                String.class
-            );
-            
-            return formatTVResources(response.getBody());
-        } catch (Exception e) {
-            return "获取电视剧网盘资源出错: " + e.getMessage();
-        }
-    }
-
-    @Override
     @Tool(description = "getPersonResources")
     public String getPersonResources(
             @Parameter(description = "人物的TMDB ID") int tmdbId) {
         try {
+            logger.info("获取人物网盘资源: tmdbId={}", tmdbId);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 baseUrl + "/person/" + tmdbId + "/115");
                 
@@ -373,6 +440,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -380,17 +448,21 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatPersonResources(response.getBody());
         } catch (Exception e) {
+            logger.error("获取人物网盘资源出错", e);
             return "获取人物网盘资源出错: " + e.getMessage();
         }
     }
-
+    
     @Override
     @Tool(description = "getCollectionResources")
     public String getCollectionResources(
             @Parameter(description = "合集的TMDB ID") int tmdbId) {
         try {
+            logger.info("获取合集网盘资源: tmdbId={}", tmdbId);
+            
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 baseUrl + "/collection/" + tmdbId + "/115");
                 
@@ -400,6 +472,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             
             HttpEntity<?> entity = new HttpEntity<>(headers);
             
+            logger.debug("API请求: {}", builder.toUriString());
             ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -407,8 +480,10 @@ public class NullbrApiServiceImpl implements NullbrApiService {
                 String.class
             );
             
+            logger.debug("API响应状态码: {}", response.getStatusCode());
             return formatCollectionResources(response.getBody());
         } catch (Exception e) {
+            logger.error("获取合集网盘资源出错", e);
             return "获取合集网盘资源出错: " + e.getMessage();
         }
     }
