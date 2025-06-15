@@ -7,3 +7,8 @@ nullbr:
     base-url: https://api.nullbr.eu.org
     app-id: pUNPgvXND
     api-key: Ea8F3jR76suCbOqQpi5GAVEhcpbhiI94
+
+cms:
+  base-url: https://cms.asdzxc.tech:8443/
+  username: azk
+  password: Azk@cms001
