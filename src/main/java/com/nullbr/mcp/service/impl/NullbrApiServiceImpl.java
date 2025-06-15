@@ -253,6 +253,166 @@ public class NullbrApiServiceImpl implements NullbrApiService {
         }
     }
     
+    @Override
+    @Tool(description = "getList")
+    public String getList(
+            @Parameter(description = "列表ID") int listId,
+            @Parameter(description = "页码，默认为1") int page) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/list/" + listId)
+                .queryParam("page", page);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatListResults(response.getBody());
+        } catch (Exception e) {
+            return "获取列表出错: " + e.getMessage();
+        }
+    }
+
+    @Override
+    @Tool(description = "getPersonInfo")
+    public String getPersonInfo(
+            @Parameter(description = "人物的TMDB ID") int tmdbId,
+            @Parameter(description = "页码，默认为1") int page) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/person/" + tmdbId)
+                .queryParam("page", page);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatPersonInfo(response.getBody());
+        } catch (Exception e) {
+            return "获取人物信息出错: " + e.getMessage();
+        }
+    }
+
+    @Override
+    @Tool(description = "getCollectionInfo")
+    public String getCollectionInfo(
+            @Parameter(description = "合集的TMDB ID") int tmdbId) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/collection/" + tmdbId);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatCollectionInfo(response.getBody());
+        } catch (Exception e) {
+            return "获取合集信息出错: " + e.getMessage();
+        }
+    }
+
+    @Override
+    @Tool(description = "getTVResources")
+    public String getTVResources(
+            @Parameter(description = "电视剧的TMDB ID") int tmdbId) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                baseUrl + "/tv/" + tmdbId + "/115");
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            headers.set("X-API-KEY", apiKey);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatTVResources(response.getBody());
+        } catch (Exception e) {
+            return "获取电视剧网盘资源出错: " + e.getMessage();
+        }
+    }
+
+    @Override
+    @Tool(description = "getPersonResources")
+    public String getPersonResources(
+            @Parameter(description = "人物的TMDB ID") int tmdbId) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                baseUrl + "/person/" + tmdbId + "/115");
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            headers.set("X-API-KEY", apiKey);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatPersonResources(response.getBody());
+        } catch (Exception e) {
+            return "获取人物网盘资源出错: " + e.getMessage();
+        }
+    }
+
+    @Override
+    @Tool(description = "getCollectionResources")
+    public String getCollectionResources(
+            @Parameter(description = "合集的TMDB ID") int tmdbId) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                baseUrl + "/collection/" + tmdbId + "/115");
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            headers.set("X-API-KEY", apiKey);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatCollectionResources(response.getBody());
+        } catch (Exception e) {
+            return "获取合集网盘资源出错: " + e.getMessage();
+        }
+    }
+    
     private String formatSearchResults(String jsonResponse) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -539,6 +699,220 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             return result.toString();
         } catch (Exception e) {
             return "解析电视剧集资源信息出错: " + e.getMessage();
+        }
+    }
+
+    private String formatListResults(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("列表信息:\n\n");
+            
+            if (rootNode.has("name") && !rootNode.get("name").isNull()) {
+                result.append("名称: ").append(rootNode.get("name").asText()).append("\n");
+            }
+            
+            if (rootNode.has("description") && !rootNode.get("description").isNull()) {
+                result.append("描述: ").append(rootNode.get("description").asText()).append("\n");
+            }
+            
+            if (rootNode.has("total_items") && !rootNode.get("total_items").isNull()) {
+                result.append("总项目数: ").append(rootNode.get("total_items").asText()).append("\n");
+            }
+            
+            result.append("\n项目列表:\n\n");
+            
+            JsonNode items = rootNode.get("items");
+            if (items != null && !items.isEmpty()) {
+                for (JsonNode item : items) {
+                    String title = item.get("title").asText();
+                    String mediaType = item.get("media_type").asText();
+                    int tmdbId = item.get("tmdbid").asInt();
+                    
+                    result.append("- ").append(title)
+                          .append(" (").append(mediaType).append(", ID: ").append(tmdbId).append(")\n");
+                    
+                    if (item.has("overview") && !item.get("overview").isNull()) {
+                        String overview = item.get("overview").asText();
+                        if (overview.length() > 100) {
+                            overview = overview.substring(0, 100) + "...";
+                        }
+                        result.append("  简介: ").append(overview).append("\n");
+                    }
+                    
+                    result.append("\n");
+                }
+            } else {
+                result.append("没有找到项目。");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析列表结果出错: " + e.getMessage();
+        }
+    }
+
+    private String formatPersonInfo(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode person = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("人物信息:\n\n");
+            
+            if (person.has("name") && !person.get("name").isNull()) {
+                result.append("姓名: ").append(person.get("name").asText()).append("\n");
+            }
+            
+            if (person.has("overview") && !person.get("overview").isNull()) {
+                result.append("简介: ").append(person.get("overview").asText()).append("\n");
+            }
+            
+            result.append("\n作品列表:\n\n");
+            
+            JsonNode items = person.get("items");
+            if (items != null && !items.isEmpty()) {
+                for (JsonNode item : items) {
+                    String title = item.get("title").asText();
+                    String mediaType = item.get("media_type").asText();
+                    int tmdbId = item.get("tmdbid").asInt();
+                    
+                    result.append("- ").append(title)
+                          .append(" (").append(mediaType).append(", ID: ").append(tmdbId).append(")\n");
+                    
+                    if (item.has("release_date") && !item.get("release_date").isNull()) {
+                        result.append("  发布日期: ").append(item.get("release_date").asText()).append("\n");
+                    }
+                    
+                    result.append("\n");
+                }
+            } else {
+                result.append("没有找到作品。");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析人物信息出错: " + e.getMessage();
+        }
+    }
+
+    private String formatCollectionInfo(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode collection = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("合集信息:\n\n");
+            
+            if (collection.has("title") && !collection.get("title").isNull()) {
+                result.append("标题: ").append(collection.get("title").asText()).append("\n");
+            }
+            
+            if (collection.has("overview") && !collection.get("overview").isNull()) {
+                result.append("简介: ").append(collection.get("overview").asText()).append("\n");
+            }
+            
+            result.append("\n电影列表:\n\n");
+            
+            JsonNode items = collection.get("items");
+            if (items != null && !items.isEmpty()) {
+                for (JsonNode item : items) {
+                    String title = item.get("title").asText();
+                    int tmdbId = item.get("tmdbid").asInt();
+                    
+                    result.append("- ").append(title)
+                          .append(" (ID: ").append(tmdbId).append(")\n");
+                    
+                    if (item.has("release_date") && !item.get("release_date").isNull()) {
+                        result.append("  发布日期: ").append(item.get("release_date").asText()).append("\n");
+                    }
+                    
+                    result.append("\n");
+                }
+            } else {
+                result.append("没有找到电影。");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析合集信息出错: " + e.getMessage();
+        }
+    }
+
+    private String formatTVResources(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("电视剧网盘资源:\n\n");
+            
+            JsonNode resources = rootNode.get("115");
+            if (resources != null && !resources.isEmpty()) {
+                for (JsonNode resource : resources) {
+                    result.append("标题: ").append(resource.get("title").asText()).append("\n");
+                    result.append("大小: ").append(resource.get("size").asText()).append("\n");
+                    result.append("链接: ").append(resource.get("share_link").asText()).append("\n\n");
+                }
+            } else {
+                result.append("没有找到网盘资源。");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析电视剧网盘资源信息出错: " + e.getMessage();
+        }
+    }
+
+    private String formatPersonResources(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("人物网盘资源:\n\n");
+            
+            JsonNode resources = rootNode.get("115");
+            if (resources != null && !resources.isEmpty()) {
+                for (JsonNode resource : resources) {
+                    result.append("标题: ").append(resource.get("title").asText()).append("\n");
+                    result.append("大小: ").append(resource.get("size").asText()).append("\n");
+                    result.append("链接: ").append(resource.get("share_link").asText()).append("\n\n");
+                }
+            } else {
+                result.append("没有找到网盘资源。");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析人物网盘资源信息出错: " + e.getMessage();
+        }
+    }
+
+    private String formatCollectionResources(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("合集网盘资源:\n\n");
+            
+            JsonNode resources = rootNode.get("115");
+            if (resources != null && !resources.isEmpty()) {
+                for (JsonNode resource : resources) {
+                    result.append("标题: ").append(resource.get("title").asText()).append("\n");
+                    result.append("大小: ").append(resource.get("size").asText()).append("\n");
+                    result.append("链接: ").append(resource.get("share_link").asText()).append("\n\n");
+                }
+            } else {
+                result.append("没有找到网盘资源。");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析合集网盘资源信息出错: " + e.getMessage();
         }
     }
 }
