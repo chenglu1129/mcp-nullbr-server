@@ -38,7 +38,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "searchMedia")
+    @Tool(description = "搜索影视资源")
     public String searchMedia(
             @Parameter(description = "搜索关键词") String query,
             @Parameter(description = "页码，默认为1") int page) {
@@ -72,7 +72,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getList")
+    @Tool(description = "获取列表")
     public String getList(
             @Parameter(description = "列表ID") int listId,
             @Parameter(description = "页码，默认为1") int page) {
@@ -105,7 +105,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
 
     @Override
-    @Tool(description = "getMovieInfo")
+    @Tool(description = "获取电影信息")
     public String getMovieInfo(
             @Parameter(description = "电影的TMDB ID") int tmdbId) {
         try {
@@ -135,7 +135,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getTVInfo")
+    @Tool(description = "获取电视剧信息")
     public String getTVInfo(
             @Parameter(description = "电视剧的TMDB ID") int tmdbId) {
         try {
@@ -165,7 +165,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getTVSeasonInfo")
+    @Tool(description = "获取电视剧季度信息")
     public String getTVSeasonInfo(
             @Parameter(description = "电视剧的TMDB ID") int tmdbId,
             @Parameter(description = "季号") int seasonNumber) {
@@ -197,7 +197,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getTVEpisodeInfo")
+    @Tool(description = "获取电视剧集信息")
     public String getTVEpisodeInfo(
             @Parameter(description = "电视剧的TMDB ID") int tmdbId,
             @Parameter(description = "季号") int seasonNumber,
@@ -230,7 +230,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getPersonInfo")
+    @Tool(description = "获取人物信息")
     public String getPersonInfo(
             @Parameter(description = "人物的TMDB ID") int tmdbId,
             @Parameter(description = "页码，默认为1") int page) {
@@ -262,7 +262,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
 
     @Override
-    @Tool(description = "getCollectionInfo")
+    @Tool(description = "获取合集信息")
     public String getCollectionInfo(
             @Parameter(description = "合集的TMDB ID") int tmdbId) {
         try {
@@ -292,7 +292,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
 
     @Override
-    @Tool(description = "getMovieResources")
+    @Tool(description = "获取电影资源")
     public String getMovieResources(
             @Parameter(description = "电影的TMDB ID") int tmdbId,
             @Parameter(description = "资源类型，可选值：115(网盘)、magnet(磁力)、ed2k(电驴)、video(在线播放)") String resourceType) {
@@ -325,7 +325,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getTVResources")
+    @Tool(description = "获取电视剧网盘资源")
     public String getTVResources(
             @Parameter(description = "电视剧的TMDB ID") int tmdbId) {
         try {
@@ -357,7 +357,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getTVSeasonResources")
+    @Tool(description = "获取电视剧季度资源")
     public String getTVSeasonResources(
             @Parameter(description = "电视剧的TMDB ID") int tmdbId,
             @Parameter(description = "季号") int seasonNumber,
@@ -391,7 +391,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getTVEpisodeResources")
+    @Tool(description = "获取电视剧集资源")
     public String getTVEpisodeResources(
             @Parameter(description = "电视剧的TMDB ID") int tmdbId,
             @Parameter(description = "季号") int seasonNumber,
@@ -427,7 +427,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getPersonResources")
+    @Tool(description = "获取人物网盘资源")
     public String getPersonResources(
             @Parameter(description = "人物的TMDB ID") int tmdbId) {
         try {
@@ -459,7 +459,7 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     }
     
     @Override
-    @Tool(description = "getCollectionResources")
+    @Tool(description = "获取合集网盘资源")
     public String getCollectionResources(
             @Parameter(description = "合集的TMDB ID") int tmdbId) {
         try {
