@@ -1,6 +1,6 @@
-package com.cheng.mcpnullbrserversse.config;
+package com.nullbr.mcp.config;
 
-import com.cheng.mcpnullbrserversse.service.NullbrApiService;
+import com.nullbr.mcp.service.NullbrApiService;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
