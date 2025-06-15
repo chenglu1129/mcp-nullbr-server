@@ -90,20 +90,80 @@ public class NullbrApiServiceImpl implements NullbrApiService {
     @Tool(description = "getTVInfo")
     public String getTVInfo(
             @Parameter(description = "电视剧的TMDB ID") int tmdbId) {
-        // 简化实现，实际项目中可以根据需要扩展
-        return "未实现";
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/tv/" + tmdbId);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatTVInfo(response.getBody());
+        } catch (Exception e) {
+            return "获取电视剧信息出错: " + e.getMessage();
+        }
     }
     
     @Override
-    public String getTVSeasonInfo(int tmdbId, int seasonNumber) {
-        // 简化实现，实际项目中可以根据需要扩展
-        return "未实现";
+    @Tool(description = "getTVSeasonInfo")
+    public String getTVSeasonInfo(
+            @Parameter(description = "电视剧的TMDB ID") int tmdbId,
+            @Parameter(description = "季号") int seasonNumber) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                baseUrl + "/tv/" + tmdbId + "/season/" + seasonNumber);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatTVSeasonInfo(response.getBody());
+        } catch (Exception e) {
+            return "获取电视剧季度信息出错: " + e.getMessage();
+        }
     }
     
     @Override
-    public String getTVEpisodeInfo(int tmdbId, int seasonNumber, int episodeNumber) {
-        // 简化实现，实际项目中可以根据需要扩展
-        return "未实现";
+    @Tool(description = "getTVEpisodeInfo")
+    public String getTVEpisodeInfo(
+            @Parameter(description = "电视剧的TMDB ID") int tmdbId,
+            @Parameter(description = "季号") int seasonNumber,
+            @Parameter(description = "集号") int episodeNumber) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                baseUrl + "/tv/" + tmdbId + "/season/" + seasonNumber + "/episode/" + episodeNumber);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatTVEpisodeInfo(response.getBody());
+        } catch (Exception e) {
+            return "获取电视剧集信息出错: " + e.getMessage();
+        }
     }
     
     @Override
@@ -140,8 +200,27 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             @Parameter(description = "电视剧的TMDB ID") int tmdbId,
             @Parameter(description = "季号") int seasonNumber,
             @Parameter(description = "资源类型，可选值：magnet(磁力)") String resourceType) {
-        // 简化实现，实际项目中可以根据需要扩展
-        return "未实现";
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                baseUrl + "/tv/" + tmdbId + "/season/" + seasonNumber + "/" + resourceType);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            headers.set("X-API-KEY", apiKey);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatTVSeasonResources(response.getBody(), resourceType);
+        } catch (Exception e) {
+            return "获取电视剧季度资源出错: " + e.getMessage();
+        }
     }
     
     @Override
@@ -151,8 +230,27 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             @Parameter(description = "季号") int seasonNumber,
             @Parameter(description = "集号") int episodeNumber,
             @Parameter(description = "资源类型，可选值：magnet(磁力)、ed2k(电驴)、video(在线播放)") String resourceType) {
-        // 简化实现，实际项目中可以根据需要扩展
-        return "未实现";
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                baseUrl + "/tv/" + tmdbId + "/season/" + seasonNumber + "/episode/" + episodeNumber + "/" + resourceType);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            headers.set("X-API-KEY", apiKey);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatTVEpisodeResources(response.getBody(), resourceType);
+        } catch (Exception e) {
+            return "获取电视剧集资源出错: " + e.getMessage();
+        }
     }
     
     private String formatSearchResults(String jsonResponse) {
@@ -221,6 +319,38 @@ public class NullbrApiServiceImpl implements NullbrApiService {
         }
     }
     
+    private String formatTVInfo(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode tv = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("电视剧信息:\n\n");
+            
+            result.append("标题: ").append(tv.get("title").asText()).append("\n");
+            
+            if (tv.has("overview") && !tv.get("overview").isNull()) {
+                result.append("简介: ").append(tv.get("overview").asText()).append("\n");
+            }
+            
+            if (tv.has("release_date") && !tv.get("release_date").isNull()) {
+                result.append("首播日期: ").append(tv.get("release_date").asText()).append("\n");
+            }
+            
+            if (tv.has("vote") && !tv.get("vote").isNull()) {
+                result.append("评分: ").append(tv.get("vote").asText()).append("\n");
+            }
+            
+            if (tv.has("number_of_seasons") && !tv.get("number_of_seasons").isNull()) {
+                result.append("季数: ").append(tv.get("number_of_seasons").asText()).append("\n");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析电视剧信息出错: " + e.getMessage();
+        }
+    }
+    
     private String formatMovieResources(String jsonResponse, String resourceType) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -259,6 +389,156 @@ public class NullbrApiServiceImpl implements NullbrApiService {
             return result.toString();
         } catch (Exception e) {
             return "解析资源信息出错: " + e.getMessage();
+        }
+    }
+    
+    private String formatTVSeasonInfo(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode season = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("电视剧季度信息:\n\n");
+            
+            if (season.has("name") && !season.get("name").isNull()) {
+                result.append("名称: ").append(season.get("name").asText()).append("\n");
+            }
+            
+            if (season.has("overview") && !season.get("overview").isNull()) {
+                result.append("简介: ").append(season.get("overview").asText()).append("\n");
+            }
+            
+            if (season.has("air_date") && !season.get("air_date").isNull()) {
+                result.append("首播日期: ").append(season.get("air_date").asText()).append("\n");
+            }
+            
+            if (season.has("episode_count") && !season.get("episode_count").isNull()) {
+                result.append("集数: ").append(season.get("episode_count").asText()).append("\n");
+            }
+            
+            if (season.has("vote_average") && !season.get("vote_average").isNull()) {
+                result.append("评分: ").append(season.get("vote_average").asText()).append("\n");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析电视剧季度信息出错: " + e.getMessage();
+        }
+    }
+    
+    private String formatTVEpisodeInfo(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode episode = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("电视剧集信息:\n\n");
+            
+            if (episode.has("name") && !episode.get("name").isNull()) {
+                result.append("标题: ").append(episode.get("name").asText()).append("\n");
+            }
+            
+            if (episode.has("overview") && !episode.get("overview").isNull()) {
+                result.append("简介: ").append(episode.get("overview").asText()).append("\n");
+            }
+            
+            if (episode.has("air_date") && !episode.get("air_date").isNull()) {
+                result.append("播出日期: ").append(episode.get("air_date").asText()).append("\n");
+            }
+            
+            if (episode.has("vote_average") && !episode.get("vote_average").isNull()) {
+                result.append("评分: ").append(episode.get("vote_average").asText()).append("\n");
+            }
+            
+            if (episode.has("runtime") && !episode.get("runtime").isNull()) {
+                result.append("片长: ").append(episode.get("runtime").asText()).append(" 分钟\n");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析电视剧集信息出错: " + e.getMessage();
+        }
+    }
+    
+    private String formatTVSeasonResources(String jsonResponse, String resourceType) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("电视剧季度资源 (").append(resourceType).append("):\n\n");
+            
+            if (resourceType.equals("magnet")) {
+                JsonNode resources = rootNode.get("magnet");
+                if (resources != null && !resources.isEmpty()) {
+                    for (JsonNode resource : resources) {
+                        result.append("名称: ").append(resource.get("name").asText()).append("\n");
+                        result.append("大小: ").append(resource.get("size").asText()).append("\n");
+                        result.append("链接: ").append(resource.get("magnet").asText()).append("\n\n");
+                    }
+                } else {
+                    result.append("没有找到磁力资源。");
+                }
+            } else {
+                // 其他资源类型
+                result.append(jsonResponse);
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析电视剧季度资源信息出错: " + e.getMessage();
+        }
+    }
+    
+    private String formatTVEpisodeResources(String jsonResponse, String resourceType) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("电视剧集资源 (").append(resourceType).append("):\n\n");
+            
+            if (resourceType.equals("magnet")) {
+                JsonNode resources = rootNode.get("magnet");
+                if (resources != null && !resources.isEmpty()) {
+                    for (JsonNode resource : resources) {
+                        result.append("名称: ").append(resource.get("name").asText()).append("\n");
+                        result.append("大小: ").append(resource.get("size").asText()).append("\n");
+                        result.append("链接: ").append(resource.get("magnet").asText()).append("\n\n");
+                    }
+                } else {
+                    result.append("没有找到磁力资源。");
+                }
+            } else if (resourceType.equals("ed2k")) {
+                JsonNode resources = rootNode.get("ed2k");
+                if (resources != null && !resources.isEmpty()) {
+                    for (JsonNode resource : resources) {
+                        result.append("名称: ").append(resource.get("name").asText()).append("\n");
+                        result.append("大小: ").append(resource.get("size").asText()).append("\n");
+                        result.append("链接: ").append(resource.get("ed2k").asText()).append("\n\n");
+                    }
+                } else {
+                    result.append("没有找到电驴资源。");
+                }
+            } else if (resourceType.equals("video")) {
+                JsonNode resources = rootNode.get("video");
+                if (resources != null && !resources.isEmpty()) {
+                    for (JsonNode resource : resources) {
+                        result.append("名称: ").append(resource.get("name").asText()).append("\n");
+                        result.append("类型: ").append(resource.get("type").asText()).append("\n");
+                        result.append("链接: ").append(resource.get("link").asText()).append("\n\n");
+                    }
+                } else {
+                    result.append("没有找到在线播放资源。");
+                }
+            } else {
+                // 其他资源类型
+                result.append(jsonResponse);
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析电视剧集资源信息出错: " + e.getMessage();
         }
     }
 }

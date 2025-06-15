@@ -38,6 +38,7 @@ public interface NullbrApiService {
      * @param seasonNumber 季号
      * @return 季详情
      */
+    @Tool(description = "getTVSeasonInfo")
     String getTVSeasonInfo(int tmdbId, int seasonNumber);
     
     /**
@@ -47,6 +48,7 @@ public interface NullbrApiService {
      * @param episodeNumber 集号
      * @return 集详情
      */
+    @Tool(description = "getTVEpisodeInfo")
     String getTVEpisodeInfo(int tmdbId, int seasonNumber, int episodeNumber);
     
     /**
