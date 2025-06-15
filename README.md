@@ -50,118 +50,22 @@ mvn clean package
 
 ### 使用
 
-#### 方式一：命令行运行
+#### 命令行运行
 
 ```bash
 java -Dspring.ai.mcp.server.stdio=true -Dspring.main.web-application-type=none -jar target/mcp-nullbr-server-0.0.1-SNAPSHOT.jar
 ```
 
-#### 方式二：通过Cherry Studio接入
+#### 通过Cherry Studio接入
 
 1. 打开Cherry Studio的设置，点击"MCP 服务器"
-2. 点击"编辑 JSON"，添加以下配置：
+2. 点击"快速创建"，添加以下配置：
+3. 类型选择sse
+4. url格式为http://ip:port/sse
+5. 在设置-模型服务里选择一个模型，输入API密钥，开启工具函数调用功能
+6. 在输入框下面勾选开启MCP服务
+7. 现在可以向AI助手询问影视资源了，例如："搜索电影钢铁侠"
 
-```json
-{
-  "mcpServers": {
-    "nullbrServer": {
-      "command": "java",
-      "args": [
-        "-Dspring.ai.mcp.server.stdio=true",
-        "-Dspring.main.web-application-type=none",
-        "-Dlogging.pattern.console=",
-        "-jar",
-        "/yourPath/mcp-nullbr-server-0.0.1-SNAPSHOT.jar"
-      ],
-      "env": {}
-    }
-  }
-}
-```
-
-3. 在设置-模型服务里选择一个模型，输入API密钥，开启工具函数调用功能
-4. 在输入框下面勾选开启MCP服务
-5. 现在可以向AI助手询问影视资源了，例如："搜索电影钢铁侠"
-
-### 代码调用
-
-1. 引入依赖
-
-```xml
-<dependency>
-    <groupId>org.springframework.ai</groupId>
-    <artifactId>spring-ai-mcp-client-spring-boot-starter</artifactId>
-    <version>1.0.0-M6</version>
-</dependency>
-```
-
-2. 配置MCP服务器
-
-需要在application.yml中配置MCP服务器的一些参数：
-
-```yaml
-spring:
-  ai:
-    mcp:
-      client:
-        stdio:
-          # 指定MCP服务器配置文件
-          servers-configuration: classpath:/mcp-servers-config.json
-  mandatory-file-encoding: UTF-8
-```
-
-其中mcp-servers-config.json的配置如下：
-
-```json
-{
-  "mcpServers": {
-    "nullbrServer": {
-      "command": "java",
-      "args": [
-        "-Dspring.ai.mcp.server.stdio=true",
-        "-Dspring.main.web-application-type=none",
-        "-Dlogging.pattern.console=",
-        "-jar",
-        "/yourPath/mcp-nullbr-server-0.0.1-SNAPSHOT.jar"
-      ],
-      "env": {}
-    }
-  }
-}
-```
-
-3. 初始化聊天客户端
-
-```java
-@Bean
-public ChatClient initChatClient(ChatClient.Builder chatClientBuilder,
-                                ToolCallbackProvider mcpTools) {
-    return chatClientBuilder
-    .defaultTools(mcpTools)
-    .build();
-}
-```
-
-4. 接口调用
-
-```java
-@PostMapping(value = "/ai/answer/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-public Flux<String> generateStreamAsString(@RequestBody AskRequest request) {
-    Flux<String> content = chatClient.prompt()
-            .user(request.getContent())
-            .stream()
-            .content();
-    return content
-            .concatWith(Flux.just("[complete]"));
-}
-```
-
-## 后续计划
-
-- 完善电视剧相关功能
-- 添加人物和合集相关功能
-- 优化结果格式化和错误处理
-- 添加缓存机制提高性能
 
 ## 许可证
 
