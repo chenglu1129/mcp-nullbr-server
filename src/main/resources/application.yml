@@ -1,21 +1,7 @@
 spring:
-  ai:
-    mcp:
-      server:
-        stdio: true
-        name: nullbr-mcp-server
-        version: 0.0.1
-  application:
-    port: 8081
-    name: nullbr-mcp-server
   main:
     web-application-type: none
     banner-mode: off
-  http:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
       
 nullbr:
   api:
