@@ -2,7 +2,7 @@
 
 ## 简介
 
-NullBR API的题目搜索API现已兼容MCP协议，可以让任意支持MCP协议的智能体助手（如`Claude`、`Cursor`等）快速接入NullBR API，搜索和获取影视资源信息。
+NullBR API的题目搜索API现已兼容MCP协议，可以让任意支持MCP协议的智能体助手（如`Claude`、`Cursor`等）快速接入NullBR API，搜索和获取影视资源信息，并可以转存入CMS中。
 
 依赖`MCP Java SDK`开发，基于Spring AI框架实现。
 
