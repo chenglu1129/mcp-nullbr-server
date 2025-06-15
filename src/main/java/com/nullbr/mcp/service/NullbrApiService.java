@@ -13,7 +13,7 @@ public interface NullbrApiService {
      * @param page 页码
      * @return 搜索结果
      */
-    @Tool(description = "searchMedia")
+    @Tool(description = "搜索影视资源")
     String searchMedia(String query, int page);
     
     /**
@@ -22,7 +22,7 @@ public interface NullbrApiService {
      * @param page 页码
      * @return 列表详情
      */
-    @Tool(description = "getList")
+    @Tool(description = "获取列表")
     String getList(int listId, int page);
     
     /**
@@ -30,7 +30,7 @@ public interface NullbrApiService {
      * @param tmdbId 电影TMDB ID
      * @return 电影详情
      */
-    @Tool(description = "getMovieInfo")
+    @Tool(description = "获取电影详情")
     String getMovieInfo(int tmdbId);
     
     /**
@@ -38,7 +38,7 @@ public interface NullbrApiService {
      * @param tmdbId 电视剧TMDB ID
      * @return 电视剧详情
      */
-    @Tool(description = "getTVInfo")
+    @Tool(description = "获取电视剧详情")
     String getTVInfo(int tmdbId);
     
     /**
@@ -47,7 +47,7 @@ public interface NullbrApiService {
      * @param seasonNumber 季号
      * @return 季详情
      */
-    @Tool(description = "getTVSeasonInfo")
+    @Tool(description = "获取电视剧季详情")
     String getTVSeasonInfo(int tmdbId, int seasonNumber);
     
     /**
@@ -57,7 +57,7 @@ public interface NullbrApiService {
      * @param episodeNumber 集号
      * @return 集详情
      */
-    @Tool(description = "getTVEpisodeInfo")
+    @Tool(description = "获取电视剧集详情")
     String getTVEpisodeInfo(int tmdbId, int seasonNumber, int episodeNumber);
     
     /**
@@ -66,7 +66,7 @@ public interface NullbrApiService {
      * @param page 页码
      * @return 人物详情
      */
-    @Tool(description = "getPersonInfo")
+    @Tool(description = "获取人物信息")
     String getPersonInfo(int tmdbId, int page);
     
     /**
@@ -74,7 +74,7 @@ public interface NullbrApiService {
      * @param tmdbId 合集TMDB ID
      * @return 合集详情
      */
-    @Tool(description = "getCollectionInfo")
+    @Tool(description = "获取电影合集信息")
     String getCollectionInfo(int tmdbId);
     
     /**
@@ -83,7 +83,7 @@ public interface NullbrApiService {
      * @param resourceType 资源类型 (115, magnet, ed2k, video)
      * @return 资源信息
      */
-    @Tool(description = "getMovieResources")
+    @Tool(description = "获取电影资源")
     String getMovieResources(int tmdbId, String resourceType);
     
     /**
@@ -91,7 +91,7 @@ public interface NullbrApiService {
      * @param tmdbId 电视剧TMDB ID
      * @return 资源信息
      */
-    @Tool(description = "getTVResources")
+    @Tool(description = "获取电视剧网盘资源")
     String getTVResources(int tmdbId);
     
     /**
@@ -101,7 +101,7 @@ public interface NullbrApiService {
      * @param resourceType 资源类型 (magnet)
      * @return 资源信息
      */
-    @Tool(description = "getTVSeasonResources")
+    @Tool(description = "获取电视剧季资源")
     String getTVSeasonResources(int tmdbId, int seasonNumber, String resourceType);
     
     /**
@@ -112,7 +112,7 @@ public interface NullbrApiService {
      * @param resourceType 资源类型 (magnet, ed2k, video)
      * @return 资源信息
      */
-    @Tool(description = "getTVEpisodeResources")
+    @Tool(description = "获取电视剧集资源")
     String getTVEpisodeResources(int tmdbId, int seasonNumber, int episodeNumber, String resourceType);
     
     /**
@@ -120,7 +120,7 @@ public interface NullbrApiService {
      * @param tmdbId 人物TMDB ID
      * @return 资源信息
      */
-    @Tool(description = "getPersonResources")
+    @Tool(description = "获取人物网盘资源")
     String getPersonResources(int tmdbId);
     
     /**
@@ -128,6 +128,6 @@ public interface NullbrApiService {
      * @param tmdbId 合集TMDB ID
      * @return 资源信息
      */
-    @Tool(description = "getCollectionResources")
+    @Tool(description = "获取电影合集网盘资源")
     String getCollectionResources(int tmdbId);
 } 
