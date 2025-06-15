@@ -1,9 +1,6 @@
 package com.nullbr.mcp;
 
 import com.nullbr.mcp.service.NullbrApiService;
-import com.nullbr.mcp.tools.MovieTool;
-import com.nullbr.mcp.tools.SearchTool;
-import com.nullbr.mcp.tools.TVTool;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.boot.SpringApplication;
@@ -19,12 +16,9 @@ public class NullbrMcpServerApplication {
     
 
     @Bean
-    public ToolCallbackProvider serverTools(NullbrApiService nullbrApiService, 
-                                           SearchTool searchTool,
-                                           MovieTool movieTool,
-                                           TVTool tvTool) {
+    public ToolCallbackProvider serverTools(NullbrApiService nullbrApiService) {
         return MethodToolCallbackProvider.builder()
-                .toolObjects(nullbrApiService, searchTool, movieTool, tvTool)
+                .toolObjects(nullbrApiService)
                 .build();
     }
 } 
