@@ -1,0 +1,18 @@
+spring:
+  ai:
+    mcp:
+      server:
+        stdio: true
+        name: nullbr-mcp-server
+        version: 0.0.1
+  application:
+    name: nullbr-mcp-server
+  main:
+    web-application-type: none
+    banner-mode: off
+
+nullbr:
+  api:
+    base-url: https://api.nullbr.eu.org
+    app-id: your-app-id
+    api-key: your-api-key 

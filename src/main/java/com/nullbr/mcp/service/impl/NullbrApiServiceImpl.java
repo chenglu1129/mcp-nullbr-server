@@ -1,0 +1,264 @@
+package com.nullbr.mcp.service.impl;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nullbr.mcp.service.NullbrApiService;
+import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+@Service
+public class NullbrApiServiceImpl implements NullbrApiService {
+
+    @Value("${nullbr.api.base-url}")
+    private String baseUrl;
+    
+    @Value("${nullbr.api.app-id}")
+    private String appId;
+    
+    @Value("${nullbr.api.api-key}")
+    private String apiKey;
+    
+    private final RestTemplate restTemplate;
+    
+    public NullbrApiServiceImpl(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder.build();
+    }
+    
+    @Override
+    @Tool(description = "searchMedia")
+    public String searchMedia(
+            @Parameter(description = "搜索关键词") String query,
+            @Parameter(description = "页码，默认为1") int page) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/search")
+                .queryParam("query", query)
+                .queryParam("page", page);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatSearchResults(response.getBody());
+        } catch (Exception e) {
+            return "搜索出错: " + e.getMessage();
+        }
+    }
+    
+    @Override
+    @Tool(description = "getMovieInfo")
+    public String getMovieInfo(
+            @Parameter(description = "电影的TMDB ID") int tmdbId) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + "/movie/" + tmdbId);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatMovieInfo(response.getBody());
+        } catch (Exception e) {
+            return "获取电影信息出错: " + e.getMessage();
+        }
+    }
+    
+    @Override
+    @Tool(description = "getTVInfo")
+    public String getTVInfo(
+            @Parameter(description = "电视剧的TMDB ID") int tmdbId) {
+        // 简化实现，实际项目中可以根据需要扩展
+        return "未实现";
+    }
+    
+    @Override
+    public String getTVSeasonInfo(int tmdbId, int seasonNumber) {
+        // 简化实现，实际项目中可以根据需要扩展
+        return "未实现";
+    }
+    
+    @Override
+    public String getTVEpisodeInfo(int tmdbId, int seasonNumber, int episodeNumber) {
+        // 简化实现，实际项目中可以根据需要扩展
+        return "未实现";
+    }
+    
+    @Override
+    @Tool(description = "getMovieResources")
+    public String getMovieResources(
+            @Parameter(description = "电影的TMDB ID") int tmdbId,
+            @Parameter(description = "资源类型，可选值：115(网盘)、magnet(磁力)、ed2k(电驴)、video(在线播放)") String resourceType) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                baseUrl + "/movie/" + tmdbId + "/" + resourceType);
+                
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-APP-ID", appId);
+            headers.set("X-API-KEY", apiKey);
+            
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+            );
+            
+            return formatMovieResources(response.getBody(), resourceType);
+        } catch (Exception e) {
+            return "获取电影资源出错: " + e.getMessage();
+        }
+    }
+    
+    @Override
+    @Tool(description = "getTVSeasonResources")
+    public String getTVSeasonResources(
+            @Parameter(description = "电视剧的TMDB ID") int tmdbId,
+            @Parameter(description = "季号") int seasonNumber,
+            @Parameter(description = "资源类型，可选值：magnet(磁力)") String resourceType) {
+        // 简化实现，实际项目中可以根据需要扩展
+        return "未实现";
+    }
+    
+    @Override
+    @Tool(description = "getTVEpisodeResources")
+    public String getTVEpisodeResources(
+            @Parameter(description = "电视剧的TMDB ID") int tmdbId,
+            @Parameter(description = "季号") int seasonNumber,
+            @Parameter(description = "集号") int episodeNumber,
+            @Parameter(description = "资源类型，可选值：magnet(磁力)、ed2k(电驴)、video(在线播放)") String resourceType) {
+        // 简化实现，实际项目中可以根据需要扩展
+        return "未实现";
+    }
+    
+    private String formatSearchResults(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            JsonNode items = rootNode.get("items");
+            
+            if (items == null || items.isEmpty()) {
+                return "未找到相关结果。";
+            }
+            
+            StringBuilder result = new StringBuilder();
+            result.append("找到以下结果:\n\n");
+            
+            for (JsonNode item : items) {
+                String mediaType = item.get("media_type").asText();
+                String title = item.get("title").asText();
+                int tmdbId = item.get("tmdbid").asInt();
+                
+                result.append("- ").append(title)
+                      .append(" (").append(mediaType).append(", ID: ").append(tmdbId).append(")\n");
+                
+                if (item.has("overview") && !item.get("overview").isNull()) {
+                    String overview = item.get("overview").asText();
+                    if (overview.length() > 100) {
+                        overview = overview.substring(0, 100) + "...";
+                    }
+                    result.append("  简介: ").append(overview).append("\n");
+                }
+                
+                result.append("\n");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析搜索结果出错: " + e.getMessage();
+        }
+    }
+    
+    private String formatMovieInfo(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode movie = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("电影信息:\n\n");
+            
+            result.append("标题: ").append(movie.get("title").asText()).append("\n");
+            
+            if (movie.has("overview") && !movie.get("overview").isNull()) {
+                result.append("简介: ").append(movie.get("overview").asText()).append("\n");
+            }
+            
+            if (movie.has("release_date") && !movie.get("release_date").isNull()) {
+                result.append("发布日期: ").append(movie.get("release_date").asText()).append("\n");
+            }
+            
+            if (movie.has("vote") && !movie.get("vote").isNull()) {
+                result.append("评分: ").append(movie.get("vote").asText()).append("\n");
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析电影信息出错: " + e.getMessage();
+        }
+    }
+    
+    private String formatMovieResources(String jsonResponse, String resourceType) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            
+            StringBuilder result = new StringBuilder();
+            result.append("电影资源 (").append(resourceType).append("):\n\n");
+            
+            if (resourceType.equals("115")) {
+                JsonNode resources = rootNode.get("115");
+                if (resources != null && !resources.isEmpty()) {
+                    for (JsonNode resource : resources) {
+                        result.append("标题: ").append(resource.get("title").asText()).append("\n");
+                        result.append("大小: ").append(resource.get("size").asText()).append("\n");
+                        result.append("链接: ").append(resource.get("share_link").asText()).append("\n\n");
+                    }
+                } else {
+                    result.append("没有找到网盘资源。");
+                }
+            } else if (resourceType.equals("magnet")) {
+                JsonNode resources = rootNode.get("magnet");
+                if (resources != null && !resources.isEmpty()) {
+                    for (JsonNode resource : resources) {
+                        result.append("名称: ").append(resource.get("name").asText()).append("\n");
+                        result.append("大小: ").append(resource.get("size").asText()).append("\n");
+                        result.append("链接: ").append(resource.get("magnet").asText()).append("\n\n");
+                    }
+                } else {
+                    result.append("没有找到磁力资源。");
+                }
+            } else {
+                // 其他资源类型
+                result.append(jsonResponse);
+            }
+            
+            return result.toString();
+        } catch (Exception e) {
+            return "解析资源信息出错: " + e.getMessage();
+        }
+    }
+}
