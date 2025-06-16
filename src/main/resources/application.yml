@@ -20,5 +20,5 @@ spring:
 nullbr:
   api:
     base-url: https://api.nullbr.eu.org
-    app-id: pUNPgvXND
-    api-key: Ea8F3jR76suCbOqQpi5GAVEhcpbhiI94
+    app-id: app-id
+    api-key: api-key
