@@ -40,6 +40,7 @@ buildNumber.properties
 *.iws
 *.iml
 *.ipr
+*.yml
 
 ### Eclipse ###
 .apt_generated
