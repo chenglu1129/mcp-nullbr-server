@@ -2,71 +2,110 @@
 
 ## 简介
 
-NullBR API的题目搜索API现已兼容MCP协议，可以让任意支持MCP协议的智能体助手（如`Claude`、`Cursor`等）快速接入NullBR API，搜索和获取影视资源信息，并可以转存入CMS中。
+NullBR API的题目搜索API现已兼容MCP协议，可以让任意支持MCP协议的智能体助手（如`Claude`、`Cursor`、`Cherry Studio`等）快速接入NullBR API，搜索和获取影视资源信息，并可以转存入CMS中。
 
-依赖`MCP Java SDK`开发，基于Spring AI框架实现。
+本项目依赖 `MCP Java SDK` 开发，基于 Spring AI 框架实现。
+采用 SSE (服务器发送事件) 协议，支持流式响应。
 
 ## 工具列表
 
-#### 影视搜索 `searchMedia`
+本项目提供了丰富的影视资源查询与管理工具：
 
-* 搜索电影、电视剧、人物或合集
-* 输入: `query` - 搜索关键词, `page` - 页码(可选)
-* 输出: 搜索结果列表
+### 搜索与详情
+*   **影视搜索 (`searchMedia`)**: 搜索电影、电视剧、人物或合集。
+    *   输入: `query` (关键词), `page` (页码, 可选)
+*   **获取列表 (`getList`)**: 获取特定列表详情。
+    *   输入: `listId`, `page`
+*   **获取电影详情 (`getMovieInfo`)**: 获取电影详细元数据。
+    *   输入: `tmdbId`
+*   **获取电视剧详情 (`getTVInfo`)**: 获取电视剧详细元数据。
+    *   输入: `tmdbId`
+*   **获取电视剧季详情 (`getTVSeasonInfo`)**: 获取特定季度的详情。
+    *   输入: `tmdbId`, `seasonNumber`
+*   **获取电视剧集详情 (`getTVEpisodeInfo`)**: 获取特定集数的详情。
+    *   输入: `tmdbId`, `seasonNumber`, `episodeNumber`
+*   **获取人物信息 (`getPersonInfo`)**: 获取演职人员详情。
+    *   输入: `tmdbId`, `page`
+*   **获取电影合集信息 (`getCollectionInfo`)**: 获取系列电影合集详情。
+    *   输入: `tmdbId`
 
-#### 电影详情 `getMovieInfo`
+### 资源获取
+*   **获取电影资源 (`getMovieResources`)**: 获取电影的下载/播放资源。
+    *   输入: `tmdbId`, `resourceType` (115/magnet/ed2k/video)
+*   **获取电视剧资源 (`getTVResources`)**: 获取电视剧网盘资源。
+    *   输入: `tmdbId`
+*   **获取电视剧季资源 (`getTVSeasonResources`)**: 获取特定季度的资源。
+    *   输入: `tmdbId`, `seasonNumber`, `resourceType`
+*   **获取电视剧集资源 (`getTVEpisodeResources`)**: 获取特定集数的资源。
+    *   输入: `tmdbId`, `seasonNumber`, `episodeNumber`, `resourceType`
+*   **获取人物资源 (`getPersonResources`)**: 获取人物相关的网盘资源。
+    *   输入: `tmdbId`
+*   **获取合集资源 (`getCollectionResources`)**: 获取电影合集的网盘资源。
+    *   输入: `tmdbId`
 
-* 获取电影详细信息
-* 输入: `tmdbId` - 电影的TMDB ID
-* 输出: 电影详情
-
-#### 电影资源 `getMovieResources`
-
-* 获取电影资源，包括网盘、磁力链接、在线播放等
-* 输入: `tmdbId` - 电影的TMDB ID, `resourceType` - 资源类型(115/magnet/ed2k/video)
-* 输出: 电影资源信息
+### CMS 管理
+*   **添加115分享链接 (`addShareDown`)**: 将获取的115分享链接添加到CMS系统进行转存。
+    *   输入: `url`
 
 ## 快速开始
 
-使用NullBR MCP Server主要通过`Java SDK`的形式
+### 1. 环境要求
 
-### 环境要求
+*   JDK 17+
+*   Maven 3.6+
 
-- JDK 17+
-- Maven 3.6+
-
-### 安装
+### 2. 安装与配置
 
 ```bash
 git clone https://github.com/yourusername/mcp-nullbr-server
+cd mcp-nullbr-server
 ```
 
-### 构建
+在运行之前，您需要配置 `src/main/resources/application.yml` 文件，填入您的 API 密钥和 CMS 配置：
+
+```yaml
+nullbr:
+  api:
+    base-url: https://api.nullbr.eu.org
+    app-id: 您的APP_ID
+    api-key: 您的API_KEY
+
+cms:
+  base-url: 您的CMS地址
+  username: 您的CMS账号
+  password: 您的CMS密码
+```
+
+### 3. 构建
 
 ```bash
-cd mcp-nullbr-server
 mvn clean package
 ```
 
-### 使用
+### 4. 运行
 
-#### 命令行运行
+使用以下命令启动 SSE 服务（默认端口 8080）：
 
 ```bash
-java -Dspring.ai.mcp.server.stdio=true -Dspring.main.web-application-type=none -jar target/mcp-nullbr-server-0.0.1-SNAPSHOT.jar
+java -jar target/mcp-nullbr-server-0.0.1-SNAPSHOT.jar
 ```
 
-#### 通过Cherry Studio接入
+### 5. 接入客户端
 
-1. 打开Cherry Studio的设置，点击"MCP 服务器"
-2. 点击"快速创建"，添加以下配置：
-3. 类型选择sse
-4. url格式为http://ip:port/sse
-5. 在设置-模型服务里选择一个模型，输入API密钥，开启工具函数调用功能
-6. 在输入框下面勾选开启MCP服务
-7. 现在可以向AI助手询问影视资源了，例如："搜索电影钢铁侠"
+#### 通过 Cherry Studio 接入
 
+1.  打开 Cherry Studio 设置，点击 "MCP 服务器"。
+2.  点击 "添加"，配置如下：
+    *   **类型**: SSE
+    *   **URL**: `http://localhost:8080/sse` (如果部署在远程，请修改 IP)
+3.  保存配置。
+4.  在设置 -> 模型服务中，确保已启用 "工具函数调用" (Function Calling)。
+5.  在对话界面开启 MCP 服务。
+6.  现在您可以直接向 AI 询问，例如：
+    *   "搜索电影《黑客帝国》"
+    *   "帮我找一下《绝命毒师》第一季的资源"
+    *   "把这个115链接转存到我的CMS里"
 
 ## 许可证
 
-MIT 
+MIT
