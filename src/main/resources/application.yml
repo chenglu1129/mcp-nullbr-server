@@ -1,14 +1,6 @@
 spring:
   main:
     banner-mode: off
-  ai:
-    mcp:
-      server:
-        # stdio: true # 禁用Stdio，启用Streamable HTTP
-        protocol: STREAMABLE
-        type: sync
-        streamable-http:
-          mcp-endpoint: /mcp
 #这里填写个人的APPID和APIKEY
 nullbr:
   api:
