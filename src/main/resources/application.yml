@@ -1,13 +1,14 @@
 spring:
   main:
     banner-mode: off
-      
+#这里填写个人的APPID和APIKEY
 nullbr:
   api:
     base-url: https://api.nullbr.eu.org
     app-id: app-id
     api-key: api-key
 
+#这里填写个人的CMS地址,账号和密码
 cms:
   base-url: baseurl
   username: username
