@@ -19,5 +19,4 @@ public class ToolCallbackProviderRegister {
     public ToolCallbackProvider cmsTools(CMSService cmsService) {
         return MethodToolCallbackProvider.builder().toolObjects(cmsService).build();
     }
-
 }
