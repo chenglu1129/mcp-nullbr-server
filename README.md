@@ -5,7 +5,7 @@
 NullBR API的题目搜索API现已兼容MCP协议，可以让任意支持MCP协议的智能体助手（如`Claude`、`Cursor`、`Cherry Studio`等）快速接入NullBR API，搜索和获取影视资源信息，并可以转存入CMS中。
 
 本项目依赖 `MCP Java SDK` 开发，基于 Spring AI 框架实现。
-采用 SSE (服务器发送事件) 协议，支持流式响应。
+支持 **Streamable HTTP (SSE)** 协议，兼容 Cherry Studio 等客户端。
 
 ## 工具列表
 
@@ -92,11 +92,28 @@ java -jar target/mcp-nullbr-server-0.0.1-SNAPSHOT.jar
 
 ### 5. 接入客户端
 
-#### 通过 Cherry Studio 接入
+#### 通过 Cherry Studio 接入 (Stdio 方式 - 推荐本地使用)
+
+1.  确保您已安装 **JDK 17** 或更高版本。
+2.  构建项目生成 JAR 包：
+    ```bash
+    mvn clean package -DskipTests
+    ```
+3.  打开 Cherry Studio 设置，点击 "MCP 服务器"。
+4.  点击 "添加"，配置如下：
+    *   **类型**: `Stdio`
+    *   **命令**: `java`
+    *   **参数**: 
+        *   `-Dfile.encoding=UTF-8`
+        *   `-jar`
+        *   `D:\workspace\mcp_nullbr-server\target\mcp-nullbr-server-0.0.1-SNAPSHOT.jar` (请根据实际路径修改)
+5.  保存并启用，确保状态显示为 "已连接"。
+
+#### 通过 Cherry Studio 接入 (SSE 方式)
 
 1.  打开 Cherry Studio 设置，点击 "MCP 服务器"。
 2.  点击 "添加"，配置如下：
-    *   **类型**: SSE
+    *   **类型**: `SSE`
     *   **URL**: `http://localhost:8080/sse` (如果部署在远程，请修改 IP)
 3.  保存配置。
 4.  在设置 -> 模型服务中，确保已启用 "工具函数调用" (Function Calling)。
