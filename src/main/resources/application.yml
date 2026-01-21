@@ -1,6 +1,11 @@
 spring:
   main:
     banner-mode: off
+  ai:
+    mcp:
+      server:
+        stdio: true
+        type: sync
 #这里填写个人的APPID和APIKEY
 nullbr:
   api:
