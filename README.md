@@ -5,7 +5,7 @@
 NullBR API的题目搜索API现已兼容MCP协议，可以让任意支持MCP协议的智能体助手（如`Claude`、`Cursor`、`Cherry Studio`等）快速接入NullBR API，搜索和获取影视资源信息，并可以转存入CMS中。
 
 本项目依赖 `MCP Java SDK` 开发，基于 Spring AI 框架实现。
-采用 SSE (服务器发送事件) 协议，支持流式响应。
+采用 stido（标准输入输出） 协议，支持流式响应。
 
 ## 工具列表
 
