@@ -1,4 +1,4 @@
-# NullBR MCP Server
+# NullBR MCP Server(nullbr已关站)
 
 ## 简介
 
